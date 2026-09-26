@@ -2,7 +2,8 @@
 import json,sqlite3
 from contextlib import contextmanager
 from .domain import Record,utc_now
-class ServiceError(Exception): pass
+class ServiceError(Exception):
+ def __init__(self,message,code="bad_request"):super().__init__(message);self.code=code
 class DomainStore:
  def __init__(self,database=":memory:",clock=utc_now):
   self.connection=sqlite3.connect(database);self.connection.row_factory=sqlite3.Row;self.clock=clock;self.connection.executescript("""PRAGMA foreign_keys=ON;CREATE TABLE IF NOT EXISTS records(record_id TEXT PRIMARY KEY,owner_id TEXT NOT NULL,state TEXT NOT NULL,version INTEGER NOT NULL,payload TEXT NOT NULL,updated_at TEXT NOT NULL);CREATE TABLE IF NOT EXISTS events(event_id TEXT PRIMARY KEY,record_id TEXT NOT NULL,kind TEXT NOT NULL,body TEXT NOT NULL,created_at TEXT NOT NULL,FOREIGN KEY(record_id) REFERENCES records(record_id));CREATE TABLE IF NOT EXISTS idempotency(request_key TEXT PRIMARY KEY,result TEXT NOT NULL);""");self.connection.commit()

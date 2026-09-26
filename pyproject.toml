@@ -1,0 +1,8 @@
+[build-system]
+requires=[]
+build-backend="setuptools.build_meta"
+[project]
+name="mooncake_label"
+version="0.1.0"
+description="月饼营养核验库服务"
+requires-python=">=3.10"
